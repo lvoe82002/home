@@ -25,7 +25,7 @@
 const IMG_RE = /\.(jpe?g|png|gif|webp|bmp|avif)$/i
 
 /** 调用 GitHub API 列目录（带 1 小时缓存，规避未认证限流） */
-async function githubList(path, env, waitUntil) {
+async function githubList(path, env, ctx) {
   const user = env.GITHUB_USER
   const repo = env.GITHUB_REPO
   const branch = env.GITHUB_BRANCH || 'main'
@@ -56,7 +56,7 @@ async function githubList(path, env, waitUntil) {
     }
   })
   // 缓存写入不阻塞返回（Pages 用 ctx.waitUntil）
-  waitUntil(cache.put(api, copy))
+  ctx.waitUntil(cache.put(api, copy))
   return data
 }
 
@@ -70,8 +70,8 @@ function cdnUrl(env, category, filename) {
 }
 
 /** 取某个分类下的全部图片文件 */
-async function imagesOf(category, env, waitUntil) {
-  const files = await githubList(encodeURIComponent(category), env, waitUntil)
+async function imagesOf(category, env, ctx) {
+  const files = await githubList(encodeURIComponent(category), env, ctx)
   return files.filter((f) => f.type === 'file' && IMG_RE.test(f.name))
 }
 
@@ -88,7 +88,7 @@ function jsonResponse(obj, status = 200) {
 
 // Pages Functions 入口：context = { request, env, params, waitUntil, ... }
 export async function onRequest(context) {
-  const { request, env, params, waitUntil } = context
+  const { request, env, ctx, params } = context
   const url = new URL(request.url)
   const wantJson = url.searchParams.get('json') === '1'
 
@@ -113,7 +113,7 @@ export async function onRequest(context) {
 
     if (category) {
       // 指定分类
-      const images = await imagesOf(category, env, waitUntil)
+      const images = await imagesOf(category, env, ctx)
       if (!images.length) {
         return jsonResponse(
           { code: 404, msg: `分类 "${category}" 不存在或里面没有图片` },
@@ -123,10 +123,10 @@ export async function onRequest(context) {
       pick = images[Math.floor(Math.random() * images.length)]
     } else {
       // 不带分类：遍历所有分类文件夹，汇总后随机
-      const root = await githubList('', env, waitUntil)
+      const root = await githubList('', env, ctx)
       const dirs = root.filter((x) => x.type === 'dir').map((x) => x.name)
       const all = await Promise.all(
-        dirs.map((d) => imagesOf(d, env, waitUntil).catch(() => []))
+        dirs.map((d) => imagesOf(d, env, ctx).catch(() => []))
       )
       const pool = []
       dirs.forEach((d, i) => {

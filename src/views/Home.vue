@@ -46,7 +46,7 @@ const groups = [
         icon: '★',
         star: true,
         label: '随机二次元图片API',
-        url: '/api/img'
+        url: '/img-api'
       },
       {
         icon: '✎',
