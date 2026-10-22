@@ -25,7 +25,7 @@
 const IMG_RE = /\.(jpe?g|png|gif|webp|bmp|avif)$/i
 
 /** 调用 GitHub API 列目录（带 1 小时缓存，规避未认证限流） */
-async function githubList(path, env, ctx) {
+async function githubList(path, env, waitUntil) {
   const user = env.GITHUB_USER
   const repo = env.GITHUB_REPO
   const branch = env.GITHUB_BRANCH || 'main'
@@ -70,8 +70,8 @@ function cdnUrl(env, category, filename) {
 }
 
 /** 取某个分类下的全部图片文件 */
-async function imagesOf(category, env, ctx) {
-  const files = await githubList(encodeURIComponent(category), env, ctx)
+async function imagesOf(category, env, waitUntil) {
+  const files = await githubList(encodeURIComponent(category), env, waitUntil)
   return files.filter((f) => f.type === 'file' && IMG_RE.test(f.name))
 }
 
