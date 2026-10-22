@@ -1,0 +1,191 @@
+/* ============================================================
+   全局设计变量（取自 alcy.cc 的浅蓝 / 天青色系）
+   ============================================================ */
+:root {
+  --pink-50: #eef8fd;
+  --pink-100: #e1f1fa;
+  --pink-200: #c3e4f6;
+  --pink-300: #96ceec;
+  --pink-400: #63b3e2;
+  --pink-500: #3e9cd4;
+  --pink-600: #2b84bf;
+  --pink-700: #226ba3;
+  --pink-800: #1d5586;
+
+  --text: #4a5a66;
+  --text-h: #2d3e4d;
+  --muted: #7e93a0;
+
+  --card: rgba(255, 255, 255, 0.7);
+  --card-solid: #ffffff;
+  --border: rgba(62, 156, 212, 0.22);
+
+  --shadow-soft: 0 4px 14px rgba(34, 107, 163, 0.08);
+  --shadow-hover: 0 8px 24px rgba(34, 107, 163, 0.16);
+  --grad-brand: linear-gradient(135deg, #96ceec, #3e9cd4 52%, #2b84bf);
+
+  --sans: "ZCOOL KuaiLe", "Yuanti SC", "YouYuan", "PingFang SC",
+    "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+/* ============================================================
+   基础重置
+   ============================================================ */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100svh;
+  background: linear-gradient(180deg, #f3fafd, #e6f3fa 38%, #eef8fd 72%, #f1fafc);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 155%;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--pink-600);
+}
+
+/* ============================================================
+   应用骨架：居中内容 + 页脚贴底
+   ============================================================ */
+.app-shell {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+}
+
+.app-main {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.app-footer {
+  margin-top: auto;
+  padding: 30px 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.app-footer p {
+  margin: 0;
+}
+
+.app-footer a {
+  color: var(--pink-600);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.app-footer a:hover {
+  color: var(--pink-500);
+  text-decoration: underline;
+}
+
+/* ============================================================
+   路由切换动画
+   ============================================================ */
+.page-enter-active {
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.page-leave-active {
+  transition: all 0.2s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* ============================================================
+   通用动画
+   ============================================================ */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ring-spin {
+  to {
+    --ring-angle: 360deg;
+  }
+}
+
+@property --ring-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes jelly {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(0.97, 1.03);
+  }
+  50% {
+    transform: scale(1.03, 0.97);
+  }
+  75% {
+    transform: scale(0.99, 1.01);
+  }
+}
+
+@keyframes bounce-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 尊重「减少动态效果」系统偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

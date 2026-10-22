@@ -1,0 +1,4 @@
+# SPA 前端路由回退：找不到静态文件/函数时，交给 index.html 由 vue-router 处理
+# 200 表示“内部重写”而非 302 跳转，URL 保持不变。
+# 注意：/api/* 已由 Pages Functions 接管，Functions 优先级高于本规则，不会被覆盖。
+/*    /index.html   200
