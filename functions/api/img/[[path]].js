@@ -113,7 +113,7 @@ export async function onRequest(context) {
 
     if (category) {
       // 指定分类
-      const images = await imagesOf(category, env, ctx)
+      const images = await imagesOf(category, env, waitUntil)
       if (!images.length) {
         return jsonResponse(
           { code: 404, msg: `分类 "${category}" 不存在或里面没有图片` },
@@ -123,10 +123,10 @@ export async function onRequest(context) {
       pick = images[Math.floor(Math.random() * images.length)]
     } else {
       // 不带分类：遍历所有分类文件夹，汇总后随机
-      const root = await githubList('', env, ctx)
+      const root = await githubList('', env, waitUntil)
       const dirs = root.filter((x) => x.type === 'dir').map((x) => x.name)
       const all = await Promise.all(
-        dirs.map((d) => imagesOf(d, env, ctx).catch(() => []))
+        dirs.map((d) => imagesOf(d, env, waitUntil).catch(() => []))
       )
       const pool = []
       dirs.forEach((d, i) => {
