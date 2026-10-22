@@ -11,6 +11,7 @@ const routes = [
   // 以后要加博客/归档/分类，照着这里加即可：
   // { path: '/blog', name: 'blog', component: () => import('../views/Blog.vue') },
   { path: '/img-api', name: 'img-api', component: () => import('../views/ImgApi.vue') },
+  { path: '/img-api/gallery', name: 'img-gallery', component: () => import('../views/Gallery.vue') },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }
 ]
 

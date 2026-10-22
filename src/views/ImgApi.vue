@@ -2,24 +2,30 @@
 import { ref, onMounted } from 'vue'
 import heroBg from '../assets/hero-bg.jpg'
 
+const origin = location.origin
 const apiBase = '/api/img'
-const imgUrl = ref('')
-const loading = ref(false)
 
-async function refresh() {
-  loading.value = true
+const categories = ref([])
+const thumbs = ref({})
+
+async function loadCats() {
   try {
-    const r = await fetch(apiBase + '?json=1&t=' + Date.now())
+    const r = await fetch(apiBase + '?list=1&t=' + Date.now())
     const data = await r.json()
-    if (data.code === 200) imgUrl.value = data.url
-    else imgUrl.value = heroBg
-  } catch (e) {
-    imgUrl.value = heroBg
-  }
-  loading.value = false
+    if (data.code === 200) categories.value = data.categories || []
+    for (const c of categories.value) refreshThumb(c.name)
+  } catch (e) {}
 }
 
-onMounted(refresh)
+async function refreshThumb(name) {
+  try {
+    const r = await fetch(apiBase + '/' + encodeURIComponent(name) + '?json=1&t=' + Date.now())
+    const data = await r.json()
+    if (data.code === 200) thumbs.value[name] = data.url
+  } catch (e) {}
+}
+
+onMounted(loadCats)
 </script>
 
 <template>
@@ -27,8 +33,7 @@ onMounted(refresh)
     <div class="hero-bg" :style="{ backgroundImage: `url(${heroBg})` }"></div>
 
     <section class="hero">
-      <div class="logo" role="img" aria-label="栗子 API">
-        <!-- 栗子 Logo（复刻自原站） -->
+      <div class="logo" role="img" aria-label="次元API">
         <svg viewBox="0 0 1125.62 303.95" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="g1" x1="1100.38" y1="184.27" x2="1102.29" y2="134.49" gradientUnits="userSpaceOnUse">
@@ -53,26 +58,10 @@ onMounted(refresh)
             <ellipse cx="154.43" cy="184.42" rx="100.9" ry="72.03" transform="translate(-29.41 29.3) rotate(-9.9)" style="fill:#fce0bc"></ellipse>
             <path d="m72.29,109.92c11.84-12.55,20.72-25.88,27.38-38.66-7.86-3.98-24.65,6.92-24.65,6.92l-.06-.16c-26.05,29.2-50.48,59.39-64.19,91.73-8.64,20.38-10.51,42.68-4.61,63.57,1.86,6.58,4.58,13.41,8.5,20.1,0,0,29.58,12.87,73.98,18C7.32,235.73,30.38,154.32,72.29,109.92Z" style="fill:#7e3a1a"></path>
             <path d="m175.93,48.19c-28.12-14.86-42.33-32.19-49.22-43.78-1.75-2.95-6.54-2.11-7.19,1.26-.02.09-.04.18-.05.27-2.61,13.26-10.15,34.25-31.42,57.59-4.38,4.81-8.76,9.64-13.09,14.49l.06.16s16.79-10.9,24.65-6.92c.97.49,1.81,1.19,2.46,2.19,5.91,9.04,6.17,4.97,13.27.15,7.11-4.82,12.85-.9,16.8,2.44,3.95,3.34,10.46,3.32,12.56-5.33s13.57-7.79,17.51-4.54c3.94,3.26,10.79,3.85,8.42-5.58-1.9-7.58,8.6-8.22,14.55-7.44-3.11-1.66-6.22-3.31-9.33-4.95Z" style="fill:#c49066"></path>
-            <path d="m104.57,106.69c-.68.12-1.41,0-2.02-.38-1.27-.78-1.59-2.39-.72-3.59,8.03-11.09,12.76-30.57,12.81-30.76.34-1.41,1.83-2.32,3.32-2.04,1.5.28,2.44,1.65,2.1,3.05-.2.84-5.02,20.65-13.65,32.58-.45.62-1.12,1.01-1.85,1.14Z" />
-            <path d="m94.34,123.4c-.89.15-1.83-.09-2.49-.74-1.05-1.03-.98-2.67.14-3.67,1.44-1.28,3.79-5.7,5-8.44.59-1.34,2.22-2,3.64-1.48,1.42.52,2.09,2.02,1.5,3.36-.56,1.27-3.52,7.76-6.34,10.28-.42.37-.92.6-1.45.69Z" />
-            <path d="m140.9,106.91s-.08.01-.12.02c-1.53.21-2.91-.78-3.09-2.2l-3.36-26.1c-.18-1.42.88-2.73,2.43-2.94,1.53-.21,2.91.78,3.09,2.2l3.36,26.1c.18,1.38-.85,2.67-2.31,2.92Z" />
-            <path d="m169.23,106.15c-.8.14-1.66-.05-2.31-.58-12.58-10.27-22.79-36.12-23.22-37.21-.52-1.34.22-2.84,1.67-3.36,1.45-.52,3.04.14,3.56,1.47.1.26,10.17,25.73,21.71,35.16,1.14.93,1.23,2.57.21,3.66-.44.47-1.02.76-1.62.86Z" />
-            <path d="m229.36,109c-.46.08-.95.05-1.42-.1-38.25-12.48-60.06-38.17-60.97-39.26-.93-1.12-.7-2.75.52-3.65,1.22-.9,2.96-.72,3.9.39.21.25,21.8,25.64,58.5,37.61,1.44.47,2.17,1.95,1.63,3.3-.36.91-1.21,1.54-2.16,1.7Z" />
-            <path d="m262.34,215.88c-.46.08-.93.05-1.4-.09-1.44-.46-2.18-1.93-1.66-3.29,2.15-5.54,1.87-17.74,1.57-21.97-.1-1.43,1.06-2.69,2.6-2.82,1.53-.13,2.86.93,2.96,2.35.05.67,1.09,16.39-1.9,24.1-.36.92-1.21,1.55-2.17,1.72Z" />
             <ellipse cx="112.79" cy="177.35" rx="8.81" ry="8.19" transform="translate(-28.82 22.04) rotate(-9.9)" style="fill:#150f0d" />
             <ellipse cx="192.87" cy="163.37" rx="8.81" ry="8.19" transform="translate(-25.22 35.6) rotate(-9.9)" style="fill:#150f0d" />
-            <path d="m155.87,182.09c-.05,0-.1.02-.13.02h0c-7.25,1.01-10.82-5.81-11.7-9.55-.22-.93.42-1.87,1.42-2.09,1.03-.23,1.99.34,2.21,1.27.08.34,1.92,7.74,7.62,6.95.03,0,.06,0,.1-.01.18-.02,4.96-.71,4.57-9.19-.04-.95.77-1.78,1.77-1.84,1.02-.06,1.89.66,1.93,1.61.5,10.85-6.42,12.6-7.78,12.84Z" style="fill:#150f0d" />
             <ellipse cx="117.71" cy="201.66" rx="16.85" ry="11.64" transform="translate(-32.92 23.24) rotate(-9.9)" style="fill:#ee7e6a" />
-            <path d="m110.02,208.49c-.37.06-.76.03-1.12-.13-.92-.41-1.29-1.44-.83-2.3l5.67-10.72c.46-.86,1.57-1.24,2.49-.83s1.29,1.44.83,2.3l-5.67,10.72c-.28.52-.79.87-1.36.97Z" style="fill:#fff" />
-            <path d="m120.63,207.2c-.35.06-.71.03-1.06-.11-.93-.37-1.35-1.39-.93-2.27l5.08-10.61c.42-.88,1.52-1.29,2.45-.92.93.37,1.35,1.39.93,2.27l-5.08,10.61c-.27.56-.8.92-1.39,1.03Z" style="fill:#fff" />
             <ellipse cx="197.13" cy="187.8" rx="16.85" ry="11.64" transform="translate(-29.36 36.69) rotate(-9.9)" style="fill:#ee7e6a" />
-            <path d="m189.44,194.63c-.37.06-.76.03-1.12-.13-.92-.41-1.29-1.44-.83-2.3l5.67-10.72c.46-.86,1.57-1.24,2.49-.83s1.29,1.44.83,2.3l-5.67,10.72c-.28.52-.79.87-1.36.97Z" style="fill:#fff" />
-            <path d="m200.05,193.34c-.35.06-.71.03-1.06-.11-.93-.37-1.35-1.39-.93-2.27l5.08-10.61c.42-.88,1.52-1.29,2.45-.92.93.37,1.35,1.39.93,2.27l-5.08,10.61c-.27.56-.8.92-1.39,1.03Z" style="fill:#fff" />
-            <path d="m274.03,141.64c-1.02.18-2.09-.18-2.72-1-12.07-15.7-32.91-26.53-33.12-26.63-1.33-.68-1.79-2.26-1.02-3.52.77-1.26,2.47-1.73,3.8-1.04.9.46,22.1,11.46,34.89,28.1.89,1.15.58,2.78-.67,3.63-.36.24-.75.4-1.16.47Z" />
-            <path d="m286.39,212.49c-.4.07-.83.06-1.25-.05-1.47-.38-2.3-1.81-1.86-3.19,5.53-17.23-.97-36.28-1.04-36.48-.47-1.35.33-2.83,1.79-3.31,1.46-.47,3.03.24,3.5,1.59.29.84,7.1,20.79,1.07,39.57-.32.99-1.2,1.69-2.22,1.86Z" />
-            <path d="m111.98,57.02c-.88.15-1.81-.03-2.55-.57-1.4-1.02-1.62-2.92-.5-4.25,9.26-10.96,11.71-22.84,11.73-22.95.33-1.65,2.03-2.77,3.79-2.51,1.76.27,2.92,1.82,2.59,3.47-.11.55-2.78,13.51-13.05,25.67-.52.62-1.24,1.01-2.01,1.14Z" style="fill:#fff" />
-            <path d="m30.12,166.2c-.28.05-.57.06-.87.04-1.78-.14-3.07-1.6-2.88-3.27,2.88-25.23,27.09-48.94,28.12-49.94,1.26-1.22,3.31-1.28,4.59-.14,1.28,1.14,1.29,3.06.03,4.28-.24.23-23.65,23.19-26.29,46.29-.16,1.39-1.3,2.49-2.71,2.73Z" style="fill:#fff" />
-            <path d="m34.29,252.01c-1.11.19-2.29-.16-3.05-1.01-13.68-15.46-12.09-32.74-12.01-33.47.17-1.67,1.76-2.93,3.54-2.81,1.78.12,3.09,1.56,2.92,3.23h0c-.01.15-1.36,15.62,10.6,29.13,1.13,1.27.91,3.19-.48,4.27-.45.35-.98.58-1.52.67Z" style="fill:#fff" />
           </g>
           <g>
             <path d="m1100.98,237.82h-3.67l-4.19-1.12c-2.45-.74-4.9-2.31-7.34-4.69-1.4-1.78-2.1-2.97-2.1-3.57-1.05-2.38-2.14-4.39-3.28-6.03-1.14-1.64-1.79-2.94-1.97-3.91-.18-.97-.35-1.52-.53-1.67v-2.23c-.18-.15-.35-.89-.52-2.23-.18,0-.26-1.34-.26-4.02.35-.15.61-1.04.79-2.68-.18-1.79-.26-3.01-.26-3.68s-.18-1.37-.52-2.12v-1.56l-.26-.45c0-2.53-.26-4.46-.79-5.8,0-2.38-.09-4.02-.26-4.91.17-.45.26-1.41.26-2.9l.26-.45v-4.02l.53-.45v-7.14c.52-1.34.79-3.79.79-7.37.17-.15.43-1.12.79-2.9.17,0,.43-.59.79-1.79.17,0,.26-1.26.26-3.79l-.26-.45v-1.34l-.53-.67c0-2.38.53-5.21,1.57-8.48-.7-1.93-1.05-5.21-1.05-9.82.17-.3.26-1.12.26-2.45l.26-.45v-5.13c.35-.15.61-1.19.79-3.13.17,0,.7-.97,1.57-2.9.35,0,.53-.52.53-1.56.17,0,.26-1.34.26-4.02.17-.3.26-2.08.26-5.36.35-.74.53-1.63.53-2.68l1.57-4.69c.35,0,.79-1.63,1.31-4.91.35,0,.61-.52.79-1.56,1.75-5.06,5.51-7.88,11.28-8.48,0-.15,1.22-.22,3.67-.22,9.26,2.38,14.59,6.77,15.99,13.17,1.22,2.38,1.84,3.72,1.84,4.02.17.89.35,1.42.52,1.56v2.46c1.22,1.94,1.92,3.54,2.1,4.8.17,1.27.35,2.34.53,3.24l-.26,1.56c.35,0,.53,2.46.53,7.37l.52.45.53,7.37-.53,4.24c1.05,2.23,1.57,5.06,1.57,8.48-.35.15-.53.82-.53,2.01-.18,0-.26,1.34-.26,4.02l-.52,1.34,1.31,3.79v5.8c0,2.68-.53,4.76-1.57,6.25v3.57l-.52.45c0,1.49.17,2.61.52,3.35,0,3.28-.26,5.21-.79,5.8v3.57c.7,1.49,1.05,4.02,1.05,7.59-.35.3-.53,1.86-.53,4.69,0,1.04.09,1.79.26,2.23,0,2.53-.35,4.76-1.05,6.7v1.79c-.52.45-.79,2.16-.79,5.13-.35.3-.62,1.34-.79,3.12-.18,0-.53.67-1.05,2.01-.18,2.83-1.57,5.73-4.2,8.71-2.62,4.91-7.34,7.89-14.16,8.93l-1.05.22Z" style="fill:url(#g1)" />
@@ -89,22 +78,22 @@ onMounted(refresh)
         <p>如果你喜欢，那就分享给喜欢二次元风格的博主们吧</p>
       </div>
       <div class="cta-btn">
-        <a class="btn" :href="apiBase" target="_blank" rel="noopener">图库预览</a>
+        <a class="btn" href="/img-api/gallery">图库预览</a>
         <a class="btn" :href="apiBase + '?json=1'" target="_blank" rel="noopener">JSON 文档</a>
       </div>
     </section>
 
     <main class="content">
       <section class="cards">
-        <div class="card">
-          <div class="thumb" :class="{ loading }" @click="refresh">
-            <img v-if="imgUrl" :src="imgUrl" alt="二次元自适应" />
+        <div class="card" v-for="c in categories" :key="c.name">
+          <div class="thumb" @click="refreshThumb(c.name)">
+            <img v-if="thumbs[c.name]" :src="thumbs[c.name]" :alt="c.name" />
             <div v-else class="ph">加载中…</div>
-            <span class="tag">二次元自适应</span>
+            <span class="tag">{{ c.name }}</span>
           </div>
           <div class="card-body">
-            <span class="url">{{ fullUrl }}</span>
-            <p class="desc">二次元图片，随机返回，可做壁纸与博客头图</p>
+            <span class="url">{{ origin + '/' + c.name }}</span>
+            <p class="desc">共 {{ c.count }} 张图片，随机返回</p>
             <p class="hint">👆 点击图片可刷新预览</p>
           </div>
         </div>
@@ -123,60 +112,39 @@ onMounted(refresh)
   </div>
 </template>
 
-<script>
-export default {
-  computed: {
-    fullUrl() {
-      return (location.origin + '/api/img').replace('//', '//')
-    }
-  }
-}
-</script>
-
 <style scoped>
-.api-page { --primary: #ff8f6b; --text: #3a2c26; --muted: #8a7a70; background: #fdf6f0; min-height: 100vh; color: var(--text); font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
-
-.hero-bg {
-  position: fixed; inset: 0; z-index: 0;
-  background: linear-gradient(rgba(45,30,22,.55), rgba(45,30,22,.55)), center / cover no-repeat;
-}
+.api-page { --text: #3a2c26; --muted: #8a7a70; background: #fdf6f0; min-height: 100vh; color: var(--text); font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.hero-bg { position: fixed; inset: 0; z-index: 0; background: linear-gradient(rgba(45,30,22,.55), rgba(45,30,22,.55)), center / cover no-repeat; }
 .hero { position: relative; z-index: 1; text-align: center; padding: 90px 20px 70px; color: #fff; }
 .logo svg { width: min(250px, 70vw); height: auto; filter: drop-shadow(0 4px 16px rgba(0,0,0,.45)); }
 .slogan { margin-top: 14px; font-size: 17px; opacity: .92; line-height: 1.8; }
 .meta { margin-top: 18px; font-size: 14px; opacity: .8; line-height: 1.9; }
 .cta-btn { margin-top: 30px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-.btn {
-  display: inline-block; padding: 12px 34px; border: 1.5px solid rgba(255,255,255,.85);
-  border-radius: 999px; color: #fff; text-decoration: none; font-size: 15px; letter-spacing: 1px;
-  backdrop-filter: blur(6px); background: rgba(255,255,255,.12); transition: all .25s ease;
-}
+.btn { display: inline-block; padding: 12px 34px; border: 1.5px solid rgba(255,255,255,.85); border-radius: 999px; color: #fff; text-decoration: none; font-size: 15px; letter-spacing: 1px; backdrop-filter: blur(6px); background: rgba(255,255,255,.12); transition: all .25s ease; }
 .btn:hover { background: rgba(255,255,255,.28); transform: translateY(-2px); }
-
 .content { position: relative; z-index: 1; background: #fdf6f0; padding-top: 24px; }
-.cards { max-width: 1280px; margin: 0 auto; padding: 0 18px 50px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 24px; max-width: 560px; }
+.cards { max-width: 1280px; margin: 0 auto; padding: 0 18px 50px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 24px; }
 .card { background: rgba(255,255,255,.86); border-radius: 18px; box-shadow: 0 10px 30px -6px rgba(60,35,20,.18); overflow: hidden; display: flex; flex-direction: column; transition: transform .25s ease, box-shadow .25s ease; }
 .card:hover { transform: translateY(-5px); box-shadow: 0 18px 40px -8px rgba(60,35,20,.28); }
-.thumb { position: relative; height: 230px; background: #f0e5dd; overflow: hidden; cursor: pointer; }
+.thumb { position: relative; height: 210px; background: #f0e5dd; overflow: hidden; cursor: pointer; }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.thumb.loading::after { content: '刷新中…'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.6); color: #a05a3a; font-size: 14px; }
 .ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--muted); }
 .tag { position: absolute; left: 12px; top: 12px; padding: 6px 14px; border-radius: 999px; background: rgba(45,30,22,.72); color: #fff; font-size: 13px; font-weight: 600; }
 .card-body { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
 .url { font-family: Consolas, monospace; font-size: 13.5px; color: #1d5261; background: #f4ece6; border-radius: 6px; padding: 6px 10px; word-break: break-all; }
 .desc { color: var(--muted); font-size: 14px; line-height: 1.7; }
 .hint { color: #b0a39a; font-size: 12.5px; margin-top: auto; }
-
 .logs { max-width: 1080px; margin: 0 auto 60px; padding: 0 18px; }
 .logs h2 { text-align: center; font-size: 26px; margin-bottom: 24px; }
 .logs .box { background: rgba(255,255,255,.86); border-radius: 18px; box-shadow: 0 10px 30px -6px rgba(60,35,20,.18); padding: 20px 32px; }
 .logs p { color: var(--muted); font-size: 14.5px; line-height: 1.9; padding: 8px 0; border-bottom: 1px dashed #eadfd7; }
 .logs p:last-child { border-bottom: 0; }
-
 .home-link { display: block; text-align: center; padding: 0 0 40px; color: #d24e00; text-decoration: none; font-size: 15px; }
-
 @media (max-width: 640px) {
   .hero { padding: 60px 16px 50px; }
-  .cards { grid-template-columns: 1fr; gap: 12px; padding: 0 12px 40px; }
+  .cards { grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 12px; padding: 0 12px 40px; }
   .thumb { height: 150px; }
+  .card-body { padding: 10px 12px 12px; }
+  .desc { display: none; }
 }
 </style>
