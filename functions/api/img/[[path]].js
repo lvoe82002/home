@@ -29,7 +29,7 @@ async function githubList(path, env, ctx) {
   const user = env.GITHUB_USER
   const repo = env.GITHUB_REPO
   const branch = env.GITHUB_BRANCH || 'main'
-  const api = `https://api.github.com/repos/${user}/${repo}/contents/${path}?ref=${branch}`
+  const api = `https://api.github.com/repos/${user}/${repo}/contents/${path}?ref=${branch}&_v=2`
 
   const cache = caches.default
   const cached = await cache.match(api)
@@ -52,7 +52,7 @@ async function githubList(path, env, ctx) {
   const copy = new Response(JSON.stringify(data), {
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'public, max-age=120'
     }
   })
   // 缓存写入不阻塞返回（Pages 用 ctx.waitUntil）
