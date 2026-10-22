@@ -1,8 +1,5 @@
 # 举个栗子 · 个人主页（Vue3 + Vite，部署在 Cloudflare Pages）
 
-复刻自 `https://www.alcy.cc/home` 的同款个人主页。**纯静态站点，不需要服务器**，
-用你手上的「.top 域名 + GitHub + Cloudflare」即可零成本上线，并自带 HTTPS、免备案。
-
 ---
 
 ## 一、这个网站是什么技术做的？
