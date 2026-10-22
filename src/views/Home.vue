@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import avatar from '../assets/avatar.jpg'
 
 // —— 个人资料：改这里即可 ——
@@ -8,11 +9,17 @@ const profile = {
   desc: '一个平平无奇的小站\n在这里放一些有趣的东西'
 }
 
+// —— 头像点击旋转：每点一下转一整圈，手机端同样生效 ——
+const avatarRot = ref(0)
+function spinAvatar() {
+  avatarRot.value -= 360
+}
+
 // —— 顶部社交图标：label 用于无障碍，svg 是图标 ——
 const socials = [
   {
     label: 'GitHub',
-    url: 'https://github.com/你的用户名',
+    url: 'https://github.com/lvoe82002/home',
     color: '#2d3e4d',
     svg: 'M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14 0 1.55-.01 2.8-.01 3.18 0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z'
   },
@@ -43,13 +50,8 @@ const groups = [
       },
       {
         icon: '✎',
-        label: '我的博客',
-        url: 'https://example.com'
-      },
-      {
-        icon: '♡',
-        label: '友情链接',
-        url: '/friends'
+        label: '我的主页',
+        url: 'https://www.zenlydsp.top'
       }
     ]
   }
@@ -60,8 +62,13 @@ const groups = [
   <div class="home">
     <!-- 个人资料 -->
     <section class="profile">
-      <div class="avatar-wrap">
-        <img class="avatar" :src="profile.avatar" :alt="profile.name" />
+      <div class="avatar-wrap" @click="spinAvatar">
+        <img
+          class="avatar"
+          :src="profile.avatar"
+          :alt="profile.name"
+          :style="{ transform: 'rotate(' + avatarRot + 'deg)' }"
+        />
       </div>
 
       <h1 class="name">{{ profile.name }}</h1>
@@ -154,6 +161,10 @@ const groups = [
   box-shadow: 0 12px 30px rgba(34, 107, 163, 0.32);
 }
 
+.avatar-wrap:active {
+  transform: scale(1.06);
+}
+
 .avatar {
   display: block;
   width: 100%;
@@ -163,14 +174,6 @@ const groups = [
   border: 2px solid #fff;
   background: var(--pink-100);
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.avatar-wrap:hover .avatar {
-  transform: rotate(-360deg);
-}
-
-.avatar-wrap:active .avatar {
-  transform: scale(0.95);
 }
 
 .name {
@@ -236,6 +239,7 @@ const groups = [
   font-size: 15px;
   font-weight: 600;
   color: var(--pink-700);
+  text-align: center;
 }
 
 .md-list {

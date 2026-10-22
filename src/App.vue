@@ -1,6 +1,5 @@
 <script setup>
-// 应用外壳：顶部留白 / 中间路由出口 / 底部页脚
-const year = new Date().getFullYear()
+// 应用外壳：居中内容 + 路由出口（页脚版权与备案行已按需求移除）
 </script>
 
 <template>
@@ -12,15 +11,5 @@ const year = new Date().getFullYear()
         </transition>
       </router-view>
     </main>
-
-    <footer class="app-footer">
-      <p>
-        © {{ year }} 举个栗子 · Powered by
-        <a href="https://pages.cloudflare.com/" target="_blank" rel="noopener">Cloudflare Pages</a>
-      </p>
-      <p>
-        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">备案号（国内主机才需要，Cloudflare 免备案）</a>
-      </p>
-    </footer>
   </div>
 </template>

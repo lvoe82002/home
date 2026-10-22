@@ -78,35 +78,6 @@ a {
   padding: 40px 0;
 }
 
-.app-footer {
-  margin-top: auto;
-  padding: 30px 0 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--muted);
-}
-
-.app-footer p {
-  margin: 0;
-}
-
-.app-footer a {
-  color: var(--pink-600);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.app-footer a:hover {
-  color: var(--pink-500);
-  text-decoration: underline;
-}
-
 /* ============================================================
    路由切换动画
    ============================================================ */
