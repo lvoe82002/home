@@ -56,7 +56,7 @@ async function githubList(path, env, ctx) {
     }
   })
   // 缓存写入不阻塞返回（Pages 用 ctx.waitUntil）
-  ctx.waitUntil(cache.put(api, copy))
+  waitUntil(cache.put(api, copy))
   return data
 }
 
@@ -88,7 +88,7 @@ function jsonResponse(obj, status = 200) {
 
 // Pages Functions 入口：context = { request, env, params, waitUntil, ... }
 export async function onRequest(context) {
-  const { request, env, ctx, params } = context
+  const { request, env, params, waitUntil } = context
   const url = new URL(request.url)
   const wantJson = url.searchParams.get('json') === '1'
 
