@@ -51,6 +51,10 @@ const groups = [
     ]
   }
 ]
+// —— 爱发电计时：开始日期改这里 ——
+const afdStart = new Date('2026-10-22T00:00:00+08:00')
+const now = new Date()
+const afdDays = Math.max(0, Math.floor((now - afdStart) / 86400000))
 </script>
 
 <template>
@@ -112,6 +116,11 @@ const groups = [
         </li>
       </ul>
     </section>
+
+    <!-- 爱发电计时 -->
+    <footer class="afd-footer">
+      本站已靠爱发电运行 {{ afdDays }} 天
+    </footer>
   </div>
 </template>
 
@@ -340,5 +349,14 @@ const groups = [
 
 .md-link:hover .md-link-arrow {
   transform: translate(3px);
+}
+
+/* —— 爱发电计时 —— */
+.afd-footer {
+  margin: 36px 0 24px;
+  font-size: 13px;
+  color: #8aa3b8;
+  text-align: center;
+  letter-spacing: 0.5px;
 }
 </style>
