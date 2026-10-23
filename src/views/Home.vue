@@ -31,7 +31,7 @@ const socials = [
   },
   {
     label: 'nodejs',
-    url: '/https://nodejs.org/zh-cn',
+    url: 'https://nodejs.org/zh-cn',
     color: '#e08a2b',
     svg: 'M4 11a9 9 0 0 1 9 9h-2.5A6.5 6.5 0 0 0 4 13.5V11zm0-4a13 13 0 0 1 13 13h-2.5A10.5 10.5 0 0 0 4 9.5V7zm1.5 9.5a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5z'
   }
