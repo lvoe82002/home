@@ -6,7 +6,7 @@ import avatar from '../assets/avatar.jpg'
 const profile = {
   avatar,
   name: '举个栗子',
-  desc: '一个平平无奇的小破站\n在这里放一些有趣的东西'
+  desc: '一个平平无奇的小破站\n在这里放了一些有趣的东西'
 }
 
 // —— 头像点击旋转：每点一下转一整圈，手机端同样生效 ——
@@ -40,7 +40,7 @@ const socials = [
 // —— 分组链接：「网 站 列 表」分组 ——
 const groups = [
   {
-    title: '网 站 列 表',
+    title: '｢网 站 列 表｣',
     links: [
       {
         icon: '★',
