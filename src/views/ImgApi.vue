@@ -5,6 +5,25 @@ import heroBg from '../assets/hero-bg.jpg'
 const origin = location.origin
 const apiBase = '/api/img'
 
+// 文件夹名 → 卡片显示的中文名
+const NAME_MAP = {
+  acg: '二次元自适应',
+  pc: 'PC横图',
+  mp: '移动竖图',
+  moe: '萌版横图',
+  ys: '原神自适应',
+  miku: '初音未来自适应',
+  fj: '风景',
+  bd: '日常',
+  lai: '萝莉',
+  tx: '头像',
+  xhl: '小狐狸',
+  ysmp: '原神竖图',
+  moemp: '萌版竖图',
+  mikump: '初音未来合集'
+}
+function displayName(n) { return NAME_MAP[n] || n }
+
 const categories = ref([])
 const thumbs = ref({})
 
@@ -89,7 +108,7 @@ onMounted(loadCats)
           <div class="thumb" @click="refreshThumb(c.name)">
             <img v-if="thumbs[c.name]" :src="thumbs[c.name]" :alt="c.name" />
             <div v-else class="ph">加载中…</div>
-            <span class="tag">{{ c.name }}</span>
+            <span class="tag">{{ displayName(c.name) }}</span>
           </div>
           <div class="card-body">
             <span class="url">{{ origin + '/' + c.name }}</span>

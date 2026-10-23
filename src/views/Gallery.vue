@@ -2,6 +2,13 @@
 import { ref, onMounted, watch } from 'vue'
 
 const apiBase = '/api/img'
+const NAME_MAP = {
+  acg: '二次元自适应', pc: 'PC横图', mp: '移动竖图', moe: '萌版横图',
+  ys: '原神自适应', miku: '初音未来自适应', fj: '风景', bd: '日常',
+  lai: '萝莉', tx: '头像', xhl: '小狐狸', ysmp: '原神竖图',
+  moemp: '萌版竖图', mikump: '初音未来合集'
+}
+function displayName(n) { return NAME_MAP[n] || n }
 const categories = ref([])
 const activeCat = ref('')
 const images = ref([])
@@ -51,11 +58,11 @@ onMounted(loadCats)
           :key="c.name"
           :class="{ catBtn: true, active: c.name === activeCat }"
           @click.prevent="select(c.name)"
-        >{{ c.name }} ({{ c.count }})</a>
+        >{{ displayName(c.name) }} ({{ c.count }})</a>
       </div>
 
       <div class="gallery-container">
-        <h2 class="gallery-title">{{ activeCat }} 图片集</h2>
+        <h2 class="gallery-title">{{ displayName(activeCat) }} 图片集</h2>
         <div class="image-gallery" v-if="images.length">
           <a class="image-card" v-for="(img, i) in images" :key="i" :href="img.url" target="_blank">
             <div class="image-container">
