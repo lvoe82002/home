@@ -27,7 +27,7 @@ async function select(name) {
   try {
     const r = await fetch(apiBase + '/' + encodeURIComponent(name) + '?list=1&t=' + Date.now())
     const data = await r.json()
-    if (data.code === 200) images.value = data.images || []
+    if (data.code === 200) images.value = (data.images || []).map(i => ({ ...i, url: i.url + '?t=' + Date.now() }))
   } catch (e) {}
   loading.value = false
 }

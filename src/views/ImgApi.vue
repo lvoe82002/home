@@ -21,7 +21,7 @@ async function refreshThumb(name) {
   try {
     const r = await fetch(apiBase + '/' + encodeURIComponent(name) + '?json=1&t=' + Date.now())
     const data = await r.json()
-    if (data.code === 200) thumbs.value[name] = data.url
+    if (data.code === 200) thumbs.value[name] = data.url + '?t=' + Date.now()
   } catch (e) {}
 }
 
