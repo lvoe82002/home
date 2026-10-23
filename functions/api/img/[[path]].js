@@ -37,7 +37,7 @@ async function githubList(path, env) {
 
 function cdnUrl(env, category, filename) {
   const branch = env.GITHUB_BRANCH || 'main';
-  return `https://cdn.jsdelivr.net/gh/${env.GITHUB_USER}/${env.GITHUB_REPO}@${branch}/${encodeURIComponent(category)}/${encodeURIComponent(filename)}`;
+  return `https://gcore.jsdelivr.net/gh/${env.GITHUB_USER}/${env.GITHUB_REPO}@${branch}/${encodeURIComponent(category)}/${encodeURIComponent(filename)}`;
 }
 
 function jsonResponse(obj, status = 200) {
