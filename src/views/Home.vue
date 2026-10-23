@@ -219,7 +219,7 @@ onMounted(async () => {
 
     <!-- 爱发电计时 -->
     <footer class="afd-footer">
-      本站已靠爱发电运行 {{ afdDays }} 天
+      Copyright © 2026 小阿修 & Made by home 本站已靠爱发电运行 {{ afdDays }} 天
     </footer>
   </div>
 </template>
