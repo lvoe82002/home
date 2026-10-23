@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import avatar from '../assets/avatar.jpg'
 
 // —— 个人资料：改这里即可 ——
@@ -37,10 +37,10 @@ const socials = [
   }
 ]
 
-// —— 分组链接：原站「网站」分组 ——
+// —— 分组链接：「网 站 列 表」分组 ——
 const groups = [
   {
-    title: '网站',
+    title: '网 站 列 表',
     links: [
       {
         icon: '★',
@@ -56,14 +56,109 @@ const groups = [
     ]
   }
 ]
+
 // —— 爱发电计时：开始日期改这里 ——
 const afdStart = new Date('2026-10-22T00:00:00+08:00')
 const now = new Date()
 const afdDays = Math.max(0, Math.floor((now - afdStart) / 86400000))
+
+// ============================================================
+// —— 开场标语动画 ——
+// ============================================================
+const introVisible = ref(true)   // 开场层是否显示
+const introPlay = ref(false)     // 是否触发动画播放
+const charContainer = ref(null)  // 字符容器 DOM
+
+// 标题文字 —— 改这里即可
+const INTRO_TITLE = '阿修的小破站'
+
+function random(min, max) {
+  return Math.random() * (max - min) + min
+}
+
+function buildIntroChars() {
+  const container = document.querySelector('.intro-char-container')
+  if (!container) return
+  container.innerHTML = ''
+  const sizes = []
+  INTRO_TITLE.split('').forEach((ch, i) => {
+    const size = random(1.5, 3.5)
+    sizes.push(size)
+    const box = document.createElement('div')
+    box.className = 'intro-char-box'
+    const side = document.createElement('span')
+    // 偶数位靠左展开、奇数位靠右展开
+    side.className = i % 2 === 0 ? 'intro-char-left' : 'intro-char-right'
+    side.style.setProperty('--banner-char-size', size.toFixed(4) + 'rem')
+    const c = document.createElement('span')
+    c.className = 'intro-char'
+    c.textContent = ch
+    side.appendChild(c)
+    box.appendChild(side)
+    container.appendChild(box)
+  })
+  // 上下竖线高度 = 视口一半 - 字高一半
+  const totalRem = sizes.reduce((a, b) => a + b, 0)
+  const lineHeight = `calc(50vh - ${(totalRem / 2).toFixed(4)}rem)`
+  document.documentElement.style.setProperty('--banner-line-height', lineHeight)
+}
+
+function playIntro() {
+  introPlay.value = false
+  // 等 Teleport 渲染完成后再构建字符
+  setTimeout(() => {
+    buildIntroChars()
+    introPlay.value = true
+  }, 50)
+}
+
+function enterHome() {
+  introVisible.value = false
+}
+
+onMounted(async () => {
+  await nextTick()
+  playIntro()
+  // 动画播放约 2.6 秒后自动进入主页
+  setTimeout(enterHome, 2600)
+})
 </script>
 
 <template>
   <div class="home">
+    <!-- ========== 开场标语动画层（Teleport 到 body，避免路由 transform 导致 fixed 失效） ========== -->
+    <Teleport to="body">
+      <Transition name="intro-fade">
+        <div v-if="introVisible" class="intro-overlay" :class="{ play: introPlay }">
+        <!-- 网格背景 -->
+        <div class="intro-grid-bg" aria-hidden="true"></div>
+        <!-- 顶部环境渐变 -->
+        <div class="intro-header-gradient" aria-hidden="true"></div>
+
+        <div class="intro-banner">
+          <!-- 上竖线 -->
+          <div class="intro-line-container">
+            <div class="intro-vertical-line intro-vertical-line-top"></div>
+          </div>
+
+          <!-- 标题字符容器 -->
+          <div class="intro-char-container" ref="charContainer"></div>
+
+          <!-- 下竖线 -->
+          <div class="intro-line-container bottom">
+            <div class="intro-vertical-line intro-vertical-line-bottom"></div>
+          </div>
+
+          <!-- 向下箭头：点击直接进入主页 -->
+          <button class="intro-go-down" aria-label="向下进入主页" @click="enterHome">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 15.5l-6-6 1.4-1.4L12 12.7l4.6-4.6L18 9.5z"/></svg>
+          </button>
+        </div>
+      </div>
+    </Transition>
+    </Teleport>
+
+    <!-- ========== 主页正式内容 ========== -->
     <!-- 个人资料 -->
     <section class="profile">
       <div class="avatar-wrap" @click="spinAvatar">
@@ -129,6 +224,7 @@ const afdDays = Math.max(0, Math.floor((now - afdStart) / 86400000))
   </div>
 </template>
 
+<!-- ========== 主页样式 ========== -->
 <style scoped>
 .home {
   width: 100%;
@@ -363,5 +459,177 @@ const afdDays = Math.max(0, Math.floor((now - afdStart) / 86400000))
   color: #8aa3b8;
   text-align: center;
   letter-spacing: 0.5px;
+}
+</style>
+
+<!-- ========== 开场动画样式（非 scoped，因字符是动态创建的 DOM） ========== -->
+<style>
+:root {
+  --banner-line-color: #111;
+  --banner-char-color: #111;
+  --banner-char-bg-color: rgba(255, 255, 255, 0.55);
+  --banner-char-hover-color: #fff;
+  --yun-grid-size: 40px;
+  --yun-grid-color: rgba(30, 50, 70, 0.07);
+  --line-animation-duration: 1.3s;
+  --char-animation-duration: 1.3s;
+  --intro-bg: #f7f9fc;
+}
+
+html.dark {
+  --banner-line-color: #f2f2f2;
+  --banner-char-color: #f2f2f2;
+  --banner-char-bg-color: rgba(0, 0, 0, 0.55);
+  --banner-char-hover-color: #000;
+  --yun-grid-color: rgba(255, 255, 255, 0.08);
+  --intro-bg: #141416;
+}
+
+/* —— 开场全屏覆盖层 —— */
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--intro-bg);
+  font-family: "Noto Serif SC", "Songti SC", "STSong", ui-serif, serif;
+  color: var(--banner-char-color);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* —— 网格背景（全屏铺满，无遮罩淡出） —— */
+.intro-grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(90deg, var(--yun-grid-color) 1px, transparent 1px),
+    linear-gradient(var(--yun-grid-color) 1px, transparent 1px);
+  background-size: var(--yun-grid-size) var(--yun-grid-size);
+}
+
+/* —— 顶部环境渐变 —— */
+.intro-header-gradient {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 56vh;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(161, 196, 253, 0.28) 0, rgba(194, 233, 251, 0.28) 100%);
+  -webkit-mask-image: linear-gradient(#000, rgba(0,0,0,0) 75%);
+          mask-image: linear-gradient(#000, rgba(0,0,0,0) 75%);
+  animation: intro-fade-in 2s ease both;
+}
+html.dark .intro-header-gradient { opacity: 0; }
+
+/* —— 标语容器 —— */
+.intro-banner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+}
+
+.intro-line-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: var(--banner-line-height);
+}
+.intro-line-container.bottom { justify-content: flex-end; }
+
+.intro-vertical-line {
+  width: 1px;
+  height: 0;
+  background-color: var(--banner-line-color);
+}
+.intro-vertical-line-bottom { flex-direction: column-reverse; }
+
+.intro-overlay.play .intro-vertical-line {
+  animation: intro-extend-line var(--line-animation-duration) ease-out forwards;
+}
+.intro-overlay.play .intro-vertical-line-bottom {
+  animation: intro-extend-line var(--line-animation-duration) ease-out forwards;
+}
+@keyframes intro-extend-line {
+  from { height: 0; }
+  to   { height: var(--banner-line-height); }
+}
+
+/* —— 标题字 —— */
+.intro-char-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.intro-char-box { display: flex; }
+.intro-char-left, .intro-char-right {
+  display: flex;
+  opacity: 0;
+  color: var(--banner-char-color);
+}
+.intro-char-left {
+  border-left: 1px solid var(--banner-line-color);
+  border-right: 0 solid rgba(120, 170, 255, 0.18);
+  animation: intro-char-move-left var(--char-animation-duration) ease-out var(--line-animation-duration) forwards;
+}
+.intro-char-right {
+  border-right: 1px solid var(--banner-line-color);
+  border-left: 0 solid rgba(120, 170, 255, 0.18);
+  animation: intro-char-move-right var(--char-animation-duration) ease-out var(--line-animation-duration) forwards;
+}
+.intro-char {
+  font-weight: 900;
+  font-size: var(--banner-char-size, 1rem);
+  line-height: 1;
+  background-color: var(--banner-char-bg-color);
+  transition: color .25s ease, background-color .25s ease;
+}
+.intro-char:hover {
+  color: var(--banner-char-hover-color);
+  background-color: var(--banner-char-color);
+}
+@keyframes intro-char-move-left {
+  from { opacity: 0; border-right-width: 0; }
+  to   { opacity: 1; border-right-width: var(--banner-empty-border-size, var(--banner-char-size)); }
+}
+@keyframes intro-char-move-right {
+  from { opacity: 0; border-left-width: 0; }
+  to   { opacity: 1; border-left-width: var(--banner-empty-border-size, var(--banner-char-size)); }
+}
+
+/* —— 向下箭头 —— */
+.intro-go-down {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 2.5rem;
+  border: none;
+  background: transparent;
+  color: var(--banner-char-color);
+  cursor: pointer;
+  font-size: 1.4rem;
+  opacity: 0;
+  animation: intro-fade-in 1s ease 1.1s forwards;
+}
+.intro-go-down svg { width: 100%; height: 100%; display: block; }
+.intro-go-down:hover { transform: translateX(-50%) translateY(3px); }
+
+@keyframes intro-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* —— 开场层淡出过渡 —— */
+.intro-fade-leave-active {
+  transition: opacity 0.6s ease;
+}
+.intro-fade-leave-to {
+  opacity: 0;
 }
 </style>
