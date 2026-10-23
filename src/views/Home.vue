@@ -454,7 +454,11 @@ onMounted(async () => {
 
 /* —— 爱发电计时 —— */
 .afd-footer {
-  margin: 36px 0 24px;
+  position: fixed;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  margin: 0;
   font-size: 13px;
   color: #8aa3b8;
   text-align: center;
