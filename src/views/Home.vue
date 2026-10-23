@@ -25,7 +25,7 @@ const socials = [
   },
   {
     label: '邮箱',
-    url: 'mailto:you@example.com',
+    url: 'mailto:2078583352@qq.com',
     color: '#2b84bf',
     svg: 'M2 4h20a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm10 7.4L3.4 6h17.2L12 11.4zM3 7.8V18h18V7.8l-9 6.2-9-6.2z'
   },
@@ -50,7 +50,7 @@ const groups = [
       },
       {
         icon: '✎',
-        label: '我的主页',
+        label: '我的个人主页',
         url: 'https://www.zenlydsp.top'
       }
     ]
