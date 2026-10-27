@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import heroBg from '../assets/hero-bg.jpg'
+import sponsorImg from '../assets/sponsor.jpg'
 
 const origin = location.origin
 const apiBase = '/api/img'
@@ -118,6 +119,21 @@ onMounted(loadCats)
         </div>
       </section>
 
+      <section class="sponsor">
+        <div class="sponsor-box">
+          <h2 class="sponsor-title">
+            <svg class="sponsor-bowl" viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M5 15h22a11 11 0 0 1-22 0z" fill="#8bc34a"/>
+              <path d="M5 15a11 11 0 0 0 22 0" fill="none" stroke="#689f38" stroke-width="1.5"/>
+              <path d="M11 6c-1 1.2 1 2 0 3.2M16 5.5c-1 1.2 1 2 0 3.2M21 6c-1 1.2 1 2 0 3.2" fill="none" stroke="#8bc34a" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            要饭
+          </h2>
+          <p class="sponsor-text">网站维护不易，赞助一点呗(～o￣3￣)～（0.01也是爱）</p>
+          <img class="sponsor-img" :src="sponsorImg" alt="微信与赞赏二维码" />
+        </div>
+      </section>
+
       <section class="logs">
         <h2>改动日志</h2>
         <div class="box">
@@ -153,6 +169,12 @@ onMounted(loadCats)
 .url { font-family: Consolas, monospace; font-size: 13.5px; color: #1d5261; background: #f4ece6; border-radius: 6px; padding: 6px 10px; word-break: break-all; }
 .desc { color: var(--muted); font-size: 14px; line-height: 1.7; }
 .hint { color: #b0a39a; font-size: 12.5px; margin-top: auto; }
+.sponsor { max-width: 1080px; margin: 0 auto 60px; padding: 0 18px; }
+.sponsor-box { background: rgba(255,255,255,.86); border-radius: 18px; box-shadow: 0 10px 30px -6px rgba(60,35,20,.18); padding: 24px 28px 28px; text-align: center; }
+.sponsor-title { display: flex; align-items: center; justify-content: flex-start; gap: 10px; font-size: 24px; font-weight: 700; color: #3a2c26; margin: 0 0 16px; }
+.sponsor-bowl { width: 32px; height: 32px; }
+.sponsor-text { font-size: 16px; color: #6b5a50; line-height: 1.8; margin: 0 0 18px; }
+.sponsor-img { display: block; width: 100%; max-width: 760px; height: auto; margin: 0 auto; border-radius: 12px; pointer-events: none; }
 .logs { max-width: 1080px; margin: 0 auto 60px; padding: 0 18px; }
 .logs h2 { text-align: center; font-size: 26px; margin-bottom: 24px; }
 .logs .box { background: rgba(255,255,255,.86); border-radius: 18px; box-shadow: 0 10px 30px -6px rgba(60,35,20,.18); padding: 20px 32px; }
@@ -165,5 +187,8 @@ onMounted(loadCats)
   .thumb { height: 150px; }
   .card-body { padding: 10px 12px 12px; }
   .desc { display: none; }
+  .sponsor-box { padding: 18px 16px 20px; }
+  .sponsor-title { font-size: 20px; }
+  .sponsor-text { font-size: 14.5px; }
 }
 </style>
