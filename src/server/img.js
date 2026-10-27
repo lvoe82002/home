@@ -8,8 +8,8 @@
  *   ?json=1             返回 JSON
  *   ?list=1             返回分类清单 / 某分类全部图片
  *
- * 图片清单优先走 jsDelivr 的 data API（一次请求拿到全仓库文件列表，
- * 无 GitHub 每小时 60 次限额）；失败时回退到 GitHub Contents API。
+ * 图片清单优先走 GitHub Git Trees API（递归，一次请求拿到实时完整清单）；
+ * 失败时依次回退 jsDelivr data API、GitHub Contents API。
  */
 
 const IMG_RE = /\.(jpe?g|png|gif|webp|bmp|avif)$/i
@@ -110,35 +110,48 @@ async function loadWarehouse(env) {
     pool.get(category).push(file)
   }
 
-  // ① 首选：jsDelivr 一次性扁平清单（无限额、通常 1 次请求）
+  // ① 首选：GitHub Git Trees API（递归，一次请求拿到“实时完整”清单；
+  //    jsDelivr data API 对大仓库的目录缓存可能长期不刷新，故不再作为首选）
   try {
     const branch = env.GITHUB_BRANCH || 'main'
-    const api = `https://data.jsdelivr.com/v1/packages/gh/${env.GITHUB_USER}/${env.GITHUB_REPO}@${branch}?structure=flat`
-    const r = await fetchWithTimeout(api, { headers: { 'User-Agent': 'pages-random-image' } }, 8000)
-    if (r.ok) {
+    const api = `https://api.github.com/repos/${env.GITHUB_USER}/${env.GITHUB_REPO}/git/trees/${branch}?recursive=1`
+    const r = await fetchWithTimeout(api, { headers: githubHeaders(env) }, 10000)
+    if (!r.ok) throw new Error('GitHub Trees 接口错误 ' + r.status)
+    const data = await r.json()
+    if (data.truncated) throw new Error('GitHub Trees 清单被截断')
+    for (const item of data.tree || []) {
+      if (item.type !== 'blob') continue
+      addFile(item.path)
+    }
+    if (!pool.size) throw new Error('GitHub Trees 未返回任何图片')
+  } catch (e) {
+    // ② 兜底：jsDelivr 一次性扁平清单（无 GitHub 限额，可能略有缓存延迟）
+    try {
+      const branch = env.GITHUB_BRANCH || 'main'
+      const api = `https://data.jsdelivr.com/v1/packages/gh/${env.GITHUB_USER}/${env.GITHUB_REPO}@${branch}?structure=flat`
+      const r = await fetchWithTimeout(api, { headers: { 'User-Agent': 'pages-random-image' } }, 8000)
+      if (!r.ok) throw new Error('jsDelivr 清单接口错误 ' + r.status)
       const data = await r.json()
       for (const item of data.files || []) {
         if (item.type && item.type !== 'file') continue
         addFile(item.name)
       }
-    } else {
-      throw new Error('jsDelivr 清单接口错误 ' + r.status)
-    }
-  } catch (e) {
-    // ② 兜底：GitHub Contents API（分类目录逐层拉取，单层 10s 超时）
-    const listDir = async (path) => {
-      const branch = env.GITHUB_BRANCH || 'main'
-      const api = `https://api.github.com/repos/${env.GITHUB_USER}/${env.GITHUB_REPO}/contents/${path}?ref=${branch}`
-      const r = await fetchWithTimeout(api, { headers: githubHeaders(env) }, 10000)
-      if (!r.ok) throw new Error(`GitHub 接口错误 ${r.status}`)
-      return r.json()
-    }
+    } catch (e2) {
+      // ③ 最后：GitHub Contents API（分类目录逐层拉取，单层 10s 超时）
+      const listDir = async (path) => {
+        const branch = env.GITHUB_BRANCH || 'main'
+        const api = `https://api.github.com/repos/${env.GITHUB_USER}/${env.GITHUB_REPO}/contents/${path}?ref=${branch}`
+        const r = await fetchWithTimeout(api, { headers: githubHeaders(env) }, 10000)
+        if (!r.ok) throw new Error(`GitHub 接口错误 ${r.status}`)
+        return r.json()
+      }
 
-    const root = await listDir('')
-    const dirs = root.filter((x) => x.type === 'dir').map((x) => x.name)
-    for (const d of dirs) {
-      const files = await listDir(encodeURIComponent(d)).catch(() => [])
-      files.filter((f) => f.type === 'file' && IMG_RE.test(f.name)).forEach((f) => addFile(`/${d}/${f.name}`))
+      const root = await listDir('')
+      const dirs = root.filter((x) => x.type === 'dir').map((x) => x.name)
+      for (const d of dirs) {
+        const files = await listDir(encodeURIComponent(d)).catch(() => [])
+        files.filter((f) => f.type === 'file' && IMG_RE.test(f.name)).forEach((f) => addFile(`/${d}/${f.name}`))
+      }
     }
   }
 

@@ -150,8 +150,8 @@ git push -u origin main
    - `https://你的域名/docs` → 可视化 JSON 接口文档页（图库页和接口页的「点击查看 / JSON 文档」都跳这里）
 
    图片通过 jsDelivr CDN 直链返回，流量不经过 Functions，免费额度内基本用不完。
-   图片清单优先走 jsDelivr data API（一次请求拿全仓库，无 GitHub 60 次/小时限额），
-   失败时自动回退 GitHub Contents API，两处都有 8~10 秒超时，边缘缓存 10 分钟。
+   图片清单优先走 GitHub Git Trees API（递归，一次请求拿到实时完整清单），
+   失败时依次回退 jsDelivr data API、GitHub Contents API，均有 8~10 秒超时，边缘缓存 10 分钟。
 
 > **根路径短链怎么实现的？** `functions/[category].js` 拦截所有单段路径：
 > 是图床分类就 302 到随机图；不是分类（`/home`、`/img-api`、`/docs`、未知路径）

@@ -125,14 +125,14 @@ onMounted(loadCats)
           <p>2026.10.22 — 个人主页全新改版上线。</p>
         </div>
       </section>
-    </main>
 
-    <router-link class="home-link" to="/">← 返回主页</router-link>
+      <router-link class="home-link" to="/">← 返回主页</router-link>
+    </main>
   </div>
 </template>
 
 <style scoped>
-.api-page { --text: #3a2c26; --muted: #8a7a70; background: #fdf6f0; min-height: 100vh; color: var(--text); font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
+.api-page { --text: #3a2c26; --muted: #8a7a70; background: #fdf6f0; min-height: 100vh; display: flex; flex-direction: column; color: var(--text); font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
 .hero-bg { position: fixed; inset: 0; z-index: 0; background: linear-gradient(rgba(45,30,22,.55), rgba(45,30,22,.55)), center / cover no-repeat; }
 .hero { position: relative; z-index: 1; text-align: center; padding: 90px 20px 70px; color: #fff; }
 .logo svg { width: min(250px, 70vw); height: auto; filter: drop-shadow(0 4px 16px rgba(0,0,0,.45)); }
@@ -141,7 +141,7 @@ onMounted(loadCats)
 .cta-btn { margin-top: 30px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 .btn { display: inline-block; padding: 12px 34px; border: 1.5px solid rgba(255,255,255,.85); border-radius: 999px; color: #fff; text-decoration: none; font-size: 15px; letter-spacing: 1px; backdrop-filter: blur(6px); background: rgba(255,255,255,.12); transition: all .25s ease; }
 .btn:hover { background: rgba(255,255,255,.28); transform: translateY(-2px); }
-.content { position: relative; z-index: 1; background: #fdf6f0; padding-top: 24px; }
+.content { position: relative; z-index: 1; flex: 1 0 auto; background: #fdf6f0; padding-top: 24px; }
 .cards { max-width: 1280px; margin: 0 auto; padding: 0 18px 50px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 24px; }
 .card { background: rgba(255,255,255,.86); border-radius: 18px; box-shadow: 0 10px 30px -6px rgba(60,35,20,.18); overflow: hidden; display: flex; flex-direction: column; transition: transform .25s ease, box-shadow .25s ease; }
 .card:hover { transform: translateY(-5px); box-shadow: 0 18px 40px -8px rgba(60,35,20,.28); }
@@ -158,7 +158,7 @@ onMounted(loadCats)
 .logs .box { background: rgba(255,255,255,.86); border-radius: 18px; box-shadow: 0 10px 30px -6px rgba(60,35,20,.18); padding: 20px 32px; }
 .logs p { color: var(--muted); font-size: 14.5px; line-height: 1.9; padding: 8px 0; border-bottom: 1px dashed #eadfd7; }
 .logs p:last-child { border-bottom: 0; }
-.home-link { display: block; text-align: center; padding: 0 0 40px; color: #d24e00; text-decoration: none; font-size: 15px; }
+.home-link { display: block; text-align: center; padding: 12px 0 40px; color: #d24e00; text-decoration: none; font-size: 15px; }
 @media (max-width: 640px) {
   .hero { padding: 60px 16px 50px; }
   .cards { grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 12px; padding: 0 12px 40px; }
