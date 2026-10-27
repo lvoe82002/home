@@ -32,21 +32,30 @@ alcy-style-home/
 │
 ├── src/
 │   ├── main.js                # 程序入口，创建 Vue 应用
-│   ├── App.vue                # 页面外壳（中间内容 + 底部页脚）
+│   ├── App.vue                # 路由出口（全局不再限宽，全屏页面交给页面自己控制）
 │   ├── assets/
 │   │   ├── styles.css         # 全局样式（配色变量、背景、动画）
 │   │   └── avatar.jpg         # 头像（替换成你自己的）
 │   ├── router/
 │   │   └── index.js           # 路由表（页面地址 → 组件）
+│   ├── server/
+│   │   └── img.js             # 随机图共享逻辑（清单获取、随机、JSON 输出）
 │   └── views/
-│       ├── Home.vue           # 首页（重点改这个：昵称、简介、链接）
+│       ├── Home.vue           # 首页（窄版居中布局，重点改这个：昵称、简介、链接）
+│       ├── ImgApi.vue         # 随机图 API 介绍页（全屏）
+│       ├── Gallery.vue        # 图库分类预览页（全屏）
+│       ├── Docs.vue           # JSON 接口文档页（/docs，全屏）
 │       └── NotFound.vue       # 404 页面
 │
 └── functions/                 # ★ Cloudflare Pages Functions（免费后端）
+    ├── [category].js          # 根路径短链：/acg 直接随机一张图
     └── api/
         └── img/
             └── [[path]].js    # 随机图 API：/api/img、/api/img/<分类>
 ```
+
+> 页面布局说明：全局外壳不再锁 720px 宽度。首页在 `Home.vue` 里自己做窄版居中；
+> 图库 / API / 文档页都是全屏布局（`min-height: 100svh`），底板会铺满整个屏幕。
 
 ### 想改成你自己的内容，只需要动 3 个地方：
 
@@ -133,11 +142,21 @@ git push -u origin main
    | `GITHUB_TOKEN` | 只读令牌（可选，更稳，限额 60→5000/小时） |
 
 3. 重新部署（Deployments → Retry deployment）。访问：
-   - `https://你的域名/api/img` → 随机一张（302 跳转）
-   - `https://你的域名/api/img/acg` → 从 acg 分类随机
-   - 加 `?json=1` → 返回 JSON
+   - `https://你的域名/acg` → **根路径短链**，直接从 acg 分类随机一张（302 跳转，浏览器打开就是图）
+   - `https://你的域名/api/img` → 不指定分类，全部分类随机一张（302 跳转）
+   - `https://你的域名/api/img/acg` → 与短链等价，从 acg 分类随机
+   - 加 `?json=1` → 返回 JSON（如 `/api/img/acg?json=1`、`/acg?json=1`）
+   - 加 `?list=1` → 返回分类清单（`/api/img?list=1`）或某分类全部图片（`/api/img/acg?list=1`）
+   - `https://你的域名/docs` → 可视化 JSON 接口文档页（图库页和接口页的「点击查看 / JSON 文档」都跳这里）
 
    图片通过 jsDelivr CDN 直链返回，流量不经过 Functions，免费额度内基本用不完。
+   图片清单优先走 jsDelivr data API（一次请求拿全仓库，无 GitHub 60 次/小时限额），
+   失败时自动回退 GitHub Contents API，两处都有 8~10 秒超时，边缘缓存 10 分钟。
+
+> **根路径短链怎么实现的？** `functions/[category].js` 拦截所有单段路径：
+> 是图床分类就 302 到随机图；不是分类（`/home`、`/img-api`、`/docs`、未知路径）
+> 就交给 `env.ASSETS.fetch()`，由静态资源层按 `_redirects` 回退到 `index.html`，
+> 前端路由和 404 页照常工作。
 
 ---
 
@@ -192,6 +211,18 @@ CloudBase 等其他「云原生」平台，配置完全一样：
 ## 常见问题
 
 - **刷新 /home 后 404？** 确认 `public/_redirects` 存在且内容是 `/* /index.html 200`。
+- **直接打开 `https://域名/acg` 显示 404 页？** 老版本随机图只挂在 `/api/img/acg`，
+  `/acg` 是前端路由，自然进 404。本项目已增加 `functions/[category].js` 根路径短链，
+  部署后 `/acg` 会 302 到随机图；若仍 404，先确认该分类名确实存在于图床
+  （访问 `/api/img?list=1` 看分类清单），以及 Functions 是否已随本次部署生效。
+- **图库页底板没有铺满屏幕、两侧留白？** 不要在全局 `App.vue` 里给所有页面套
+  `max-width: 720px` 的居中容器。全屏页面各自用 `min-height: 100svh` 铺满，
+  首页的窄版居中写在 `Home.vue` 内部。
+- **「JSON 接口文档：点击查看 / JSON 文档」点了没反应？** 不要在模板里写
+  `@click="location.href=..."`（`location` 不在 Vue 模板可用变量里，点击会直接报错）。
+  正确做法是用 `<router-link to="/docs">` 或 `<a :href>`，本项目已修好。
 - **中文显示不出可爱字体？** 字体是异步加载的，等几秒或检查网络；加载失败会自动回退系统圆体。
 - **头像不显示？** 检查 `import avatar from '...'` 路径和文件后缀是否一致。
 - **随机图返回 500 提示配置变量？** 按第四节步骤 3 配置 `GITHUB_USER` / `GITHUB_REPO` 后重新部署。
+- **图库页个别图片裂图？** 图片是从 jsDelivr CDN 加载的，先确认文件在图床里存在、
+  文件名是否含特殊字符；冷节点首次回源可能较慢，稍后刷新即可。

@@ -228,9 +228,14 @@ onMounted(async () => {
 <style scoped>
 .home {
   width: 100%;
+  max-width: 720px;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: 40px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 /* —— 个人资料 —— */

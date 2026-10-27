@@ -11,12 +11,13 @@
 
 <style scoped>
 .not-found {
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 40px 0;
+  padding: 40px 20px;
 }
 
 .code {

@@ -58,25 +58,10 @@ a {
 }
 
 /* ============================================================
-   应用骨架：居中内容 + 页脚贴底
+   应用骨架：全屏路由出口
+   窄版居中布局（首页个人卡片）已下沉到 Home.vue；
+   图库 / API / 文档等页面需要铺满整屏，不在全局限制宽度。
    ============================================================ */
-.app-shell {
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  padding: 0 20px;
-}
-
-.app-main {
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
-  flex: 1 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 40px 0;
-}
 
 /* ============================================================
    路由切换动画

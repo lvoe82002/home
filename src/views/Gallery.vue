@@ -47,10 +47,10 @@ onMounted(loadCats)
     <div class="container">
       <h1>栗子次元图片库</h1>
 
-      <div class="doc-link-panel" @click="location.href = apiBase + '?json=1'" target="_blank">
+      <router-link class="doc-link-panel" to="/docs">
         <span class="book">📚</span>
         <span class="txt">JSON 接口文档：<b>点击查看</b></span>
-      </div>
+      </router-link>
 
       <div class="category-tabs">
         <a
@@ -79,11 +79,12 @@ onMounted(loadCats)
 </template>
 
 <style scoped>
-.gallery-page { background: #f0f4fa; min-height: 100vh; font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; color: #2b3a55; padding: 24px 0 80px; }
+.gallery-page { min-height: 100svh; background: linear-gradient(135deg, #f5f7fa, #e4e8f8, #f0f5ff); background-attachment: fixed; font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; color: #2b3a55; padding: 24px 0 80px; }
 .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
 h1 { text-align: center; font-size: 34px; color: #3a4a6b; margin: 10px 0 24px; }
-.doc-link-panel { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 16px; padding: 18px 22px; box-shadow: 0 6px 20px -8px rgba(50,70,110,.18); cursor: pointer; margin-bottom: 18px; font-size: 16px; }
-.doc-link-panel b { color: #2f6fed; margin-left: 6px; }
+.doc-link-panel { display: flex; align-items: center; justify-content: center; gap: 12px; background: #fff; border-radius: 16px; padding: 18px 22px; box-shadow: 0 6px 20px -8px rgba(50,70,110,.18); cursor: pointer; margin-bottom: 18px; font-size: 16px; text-decoration: none; color: inherit; transition: transform .2s, box-shadow .2s; }
+.doc-link-panel:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(50,70,110,.28); }
+.doc-link-panel b { color: #2f6fed; margin-left: 6px; text-decoration: underline; text-underline-offset: 3px; }
 .book { font-size: 22px; }
 .category-tabs { display: flex; flex-wrap: wrap; gap: 10px; background: #fff; border-radius: 16px; padding: 16px 18px; box-shadow: 0 6px 20px -8px rgba(50,70,110,.18); margin-bottom: 22px; }
 .catBtn { padding: 8px 16px; border-radius: 999px; background: #eef1f7; color: #4a5a7a; font-size: 14px; cursor: pointer; transition: all .2s; }

@@ -97,8 +97,8 @@ onMounted(loadCats)
         <p>如果你喜欢，那就分享给喜欢二次元风格的博主们吧</p>
       </div>
       <div class="cta-btn">
-        <a class="btn" href="/img-api/gallery">图库预览</a>
-        <a class="btn" :href="apiBase + '?json=1'" target="_blank" rel="noopener">JSON 文档</a>
+        <router-link class="btn" to="/img-api/gallery">图库预览</router-link>
+        <router-link class="btn" to="/docs">JSON 文档</router-link>
       </div>
     </section>
 

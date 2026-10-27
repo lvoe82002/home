@@ -12,6 +12,7 @@ const routes = [
   // { path: '/blog', name: 'blog', component: () => import('../views/Blog.vue') },
   { path: '/img-api', name: 'img-api', component: () => import('../views/ImgApi.vue') },
   { path: '/img-api/gallery', name: 'img-gallery', component: () => import('../views/Gallery.vue') },
+  { path: '/docs', name: 'docs', component: () => import('../views/Docs.vue') },
   { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }
 ]
 
