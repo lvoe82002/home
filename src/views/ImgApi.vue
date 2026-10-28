@@ -93,8 +93,8 @@ onMounted(loadCats)
         </svg>
       </div>
       <p class="slogan">图片求精，往期图片随着环境的不断升级，也会不断提高分辨率<br />
-        因为大量的图片和视频的来源多样性，如果涉及到侵权请加微信：zenly_520直接沟通处理</p>
-      <div class="meta">
+        因为大量的图片和视频的来源多样性，如果涉及到侵权请加微信直接沟通处理</p>
+      QQ群：zenly_520</p>
         <p>如果你喜欢，那就分享给喜欢二次元风格的博主们吧</p>
       </div>
       <div class="cta-btn">
