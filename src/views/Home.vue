@@ -266,9 +266,13 @@ onMounted(async () => {
   transition: box-shadow 0.3s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.avatar-wrap:hover {
-  transform: scale(1.15);
-  box-shadow: 0 12px 30px rgba(34, 107, 163, 0.32);
+/* 只有真正支持鼠标悬停的设备（桌面）才 hover 放大；
+   手机触屏点击后会粘住 :hover 导致头像放大不回弹，用 hover:hover 排除触屏 */
+@media (hover: hover) and (pointer: fine) {
+  .avatar-wrap:hover {
+    transform: scale(1.15);
+    box-shadow: 0 12px 30px rgba(34, 107, 163, 0.32);
+  }
 }
 
 .avatar-wrap:active {
