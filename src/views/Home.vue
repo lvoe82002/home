@@ -114,6 +114,9 @@ function playIntro() {
 
 function enterHome() {
   introVisible.value = false
+  // 开场动画消失，通知 App.vue 可以显示大肥鱼桌宠
+  window.__introDone = true
+  window.dispatchEvent(new Event('home:intro-done'))
 }
 
 onMounted(async () => {
