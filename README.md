@@ -1,4 +1,4 @@
-# 举个栗子 · 个人主页（Vue3 + Vite，部署在 Cloudflare Pages）
+# 举个栗子 · 个人主页（Vue3 + Vite）
 
 ---
 
