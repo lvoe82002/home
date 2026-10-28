@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import heroBg from '..https://t.mwm.moe/ycy/'
+import heroBg from 'https://t.mwm.moe/ycy/'
 import sponsorImg from '../assets/sponsor.jpg'
 
 const origin = location.origin
