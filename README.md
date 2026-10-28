@@ -8,7 +8,7 @@
 - **Vite**：构建工具，把源码打包成 `dist/` 里的静态文件（HTML/JS/CSS）
 - **vue-router**：前端路由，实现 `/home`、`/blog`、`/friends` 等多个页面
 - **站酷快乐体（ZCOOL KuaiLe）**：从 Google Fonts 加载的可爱字体
-- **Live2D 桌宠**
+- **Live2D大肥鱼看板娘 桌宠**
 - 这些**绝大多数是纯前端**就能实现；只有「随机图 API」「短链接」这类需要后端逻辑的，
   用 **Cloudflare Pages Functions（免费 Serverless）** 即可，本项目已给了一个随机图示例。
 
